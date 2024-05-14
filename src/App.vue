@@ -1,6 +1,6 @@
 <template>
   <v-layout class="rounded rounded-md">
-    <v-app-bar title="Super menu en Vuetify">
+    <v-app-bar title="Meta 4.1 Front-end/Backend">
       <template v-slot:prepend>
          <v-app-bar-nav-icon @click.stop="barOpen = !barOpen" ></v-app-bar-nav-icon>
       </template>
@@ -12,8 +12,12 @@
       <v-list-item title="Páginas"></v-list-item>
       <v-divider></v-divider>
       <v-list-item prepend-icon="mdi-home"  link to="/" title="Inicio"></v-list-item>
-      <v-list-item prepend-icon="mdi-image" link to="/imagen"  title="Imagen/chiste"></v-list-item>
-      <v-list-item prepend-icon="mdi-table" link to="/tabla" title="Tabla Modificable"></v-list-item>
+      <v-list-item prepend-icon="mdi-table" link to="/tabla" title="Activos"></v-list-item>
+      <v-list-item prepend-icon="mdi-table" link to="/ubicacion" title="Ubicaciones"></v-list-item>
+      <v-list-item prepend-icon="mdi-table" link to="/responsable" title="Responsables"></v-list-item>
+      <v-list-item prepend-icon="mdi-table" link to="/tag" title="Tags"></v-list-item>
+      <v-list-item prepend-icon="mdi-table" link to="/usuario" title="Usuarios"></v-list-item>
+      <v-list-item prepend-icon="mdi-table" link to="/activotag" title="ActivoTag"></v-list-item>
 
     </v-navigation-drawer>
 

@@ -1,15 +1,15 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="desserts"
-    :sort-by="[{ key: 'calories', order: 'asc' }]"
+    :items="activos"
+    :sort-by="[{ key: 'numSerie', order: 'asc' }]"
   >
-  
+
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Mi CRUD 2.2</v-toolbar-title>
+        <v-toolbar-title>Tabla de activos</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -45,8 +45,8 @@
                     sm="6"
                   >
                     <v-text-field
-                      v-model="editedItem.name"
-                      label="Autor"
+                      v-model="editedItem.numSerie"
+                      label="Numero Serie"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -55,8 +55,8 @@
                     sm="6"
                   >
                     <v-text-field
-                      v-model="editedItem.titulo"
-                      label="Titulo"
+                      v-model="editedItem.numInventario"
+                      label="Numero Inventario"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -65,8 +65,8 @@
                     sm="6"
                   >
                     <v-text-field
-                      v-model="editedItem.post"
-                      label="Post"
+                      v-model="editedItem.descripcion"
+                      label="Descripcion"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -115,7 +115,7 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5">¿Desea eliminar este activo?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
@@ -127,19 +127,19 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon
-        class="me-2"
-        size="small"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        size="small"
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
+  <v-icon
+    class="me-2"
+    size="small"
+    @click="editItem(item)"
+  >
+    mdi-pencil
+  </v-icon>
+  <v-icon
+    size="small"
+    @click="deleteItem(item)"
+  >
+    mdi-delete
+  </v-icon>
     </template>
     <template v-slot:no-data>
       <v-btn
@@ -153,199 +153,123 @@
 </template>
 
 <script>
-  export default {
-    data: () => ({
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
       dialog: false,
       dialogDelete: false,
       headers: [
-  {
-    title: 'Autor',
-    align: 'start',
-    sortable: false,
-    key: 'name',
-  },
-  { title: 'Titulo', key: 'titulo' },  
-  { title: 'Post', key: 'post' },     
-  { title: 'Actions', key: 'actions', sortable: false },
-],
-      desserts: [],
+        { title: 'Número de Serie', key: 'numSerie', align: 'start', sortable: true },
+        { title: 'Número de Inventario', key: 'numInventario', sortable: true },
+        { title: 'Descripción', key: 'descripcion', sortable: true },
+        { title: 'Acciones', key: 'actions', sortable: false },
+      ],
+      activos: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        titulo: '',
-        post: '',
+        numSerie: '',
+        numInventario: '',
+        descripcion: '',
       },
-      defaultItem: { 
-        name: '',
-        titulo: '',
-        post: '',
+      defaultItem: {
+        numSerie: '',
+        numInventario: '',
+        descripcion: '',
       },
-    }),
-
-    computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'Nuevo item' : 'Editar Item'
-      },
+    };
+  },
+  computed: {
+    formTitle() {
+      return this.editedIndex === -1 ? 'Nuevo activo' : 'Editar activo';
     },
-
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogDelete (val) {
-        val || this.closeDelete()
-      },
+  },
+  watch: {
+    dialog(val) {
+      val || this.close();
     },
-
-    created () {
-      this.initialize()
-      this.fetchAuthors()
-      this.fetchTitles();
-      this.fetchPosts();
+    dialogDelete(val) {
+      val || this.closeDelete();
     },
-
-    methods: {
-      async fetchAuthors() {
+  },
+  created() {
+    this.initialize();
+  },
+  methods: {
+    async fetchActivos() {
       try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/users');
-        const data = await response.json();
-        const authors = data.map(user => user.name);
-
-        // Actualizar los nombres de autor en tu aplicación
-        this.desserts.forEach((dessert, index) => {
-          dessert.name = authors[index] || 'Unknown Author';
-        });
+        const response = await axios.get('http://localhost:3000/api/activos');
+        this.activos = response.data;
       } catch (error) {
-        console.error('Error al obtener los autores:', error);
+        console.error('Error al obtener los activos:', error);
       }
     },
-    async fetchTitles() {
-      try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-        const data = await response.json();
-        const titles = data.map(post => post.title);
+    initialize() {
+      this.fetchActivos();
+    },
+    editItem(item) {
+      this.editedIndex = this.activos.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+    deleteItem(item) {
+      this.editedIndex = this.activos.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialogDelete = true;
+    },
+    deleteItemConfirm() {
+      axios.delete(`http://localhost:3000/api/activos/${this.editedItem.id}`)
+      .then(() => {
+      this.activos.splice(this.editedIndex, 1);
+      this.closeDelete();
+      })
+      .catch(error => {
+      console.error('Error al eliminar activo en el backend:', error);
+    });
+    },
+    close() {
+      this.dialog = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
+    closeDelete() {
+      this.dialogDelete = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
+    save() {
+      if (this.editedIndex > -1) {
+         // Actualizar activo existente en el backend
+       axios.put(`http://localhost:3000/api/activos/${this.editedItem.id}`, this.editedItem)
+      .then(() => {
+        // Actualizar el activo en la lista local
+        this.activos[this.editedIndex] = Object.assign({}, this.editedItem);
+        this.close();
+      })
+      .catch(error => {
+        console.error('Error al actualizar activo:', error);
+      });
 
-        // Actualizar los títulos en tu aplicación
-        this.desserts.forEach((dessert, index) => {
-          dessert.titulo = titles[index] || 'Unknown Title';
-        });
-      } catch (error) {
-        console.error('Error al obtener los títulos:', error);
+      } 
+      else {
+        // Crear un nuevo activo en el backend
+       axios.post('http://localhost:3000/api/activos', this.editedItem)
+      .then(response => {
+        // Agregar el nuevo activo a la lista local
+        this.activos.push(response.data);
+        this.close();
+      })
+      .catch(error => {
+        console.error('Error al crear nuevo activo:', error);
+      });
       }
+      this.close();
     },
-    async fetchPosts() {
-      try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-        const data = await response.json();
-        const posts = data.map(post => post.body);
-
-        // Actualizar la información de los posts en tu aplicación
-        this.desserts.forEach((dessert, index) => {
-          dessert.post = posts[index] || 'No Content';
-        });
-      } catch (error) {
-        console.error('Error al obtener la información de los posts:', error);
-      }
-    },
-  
-      initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            titulo: 'A',
-            post: 'A',
-          },
-          {
-            name: 'Ice cream sandwich',
-            titulo: 'A',
-            post: 'A',
-          },
-          {
-            name: 'Eclair',
-            titulo: 'A',
-            post: 'A',
-          },
-          {
-            name: 'Cupcake',
-            titulo: 'A',
-            post: 'A',
-          },
-          {
-            name: 'Gingerbread',
-            titulo: 'A',
-            post: 'A',
-          },
-          {
-            name: 'Jelly bean',
-            titulo: 'A',
-            post: 'A',
-          },
-          {
-            name: 'Lollipop',
-            titulo: 'A',
-            post: 'A',
-          },
-          {
-            name: 'Honeycomb',
-            titulo: 'A',
-            post: 'A',
-          },
-          {
-            name: 'Donut',
-            titulo: 'A',
-            post: 'A',
-          },
-          {
-            name: 'KitKat',
-            titulo: 'A',
-            post: 'A',
-          },
-        ]
-      },
-
-      editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-
-      deleteItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
-
-      deleteItemConfirm () {
-        this.desserts.splice(this.editedIndex, 1)
-        this.closeDelete()
-      },
-
-      close () {
-        this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
-        }
-        this.close()
-      },
-      
-    },
-    
-  }
+  },
+};
 </script>

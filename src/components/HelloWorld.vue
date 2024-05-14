@@ -41,7 +41,7 @@
 <script setup>
 import { ref } from 'vue';
 const cards = ref( [
-       { title: 'Super Tarea M2.2', src: 'https://citecuvp.tij.uabc.mx/wp-content/uploads/2022/10/ISOTIPO-UABC-COLORORIGINAL.png', flex: 12 },
+       { title:  'M4.1', src: 'https://citecuvp.tij.uabc.mx/wp-content/uploads/2022/10/ISOTIPO-UABC-COLORORIGINAL.png', flex: 12 },
        { title: 'Jesús Ramón Ruiz Soto 1182367', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 6 },
        { title: 'Desarrollo de Aplicaciones Web', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 6 },
      ])
